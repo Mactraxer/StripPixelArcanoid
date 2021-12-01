@@ -11,12 +11,18 @@ public class ImageStageScreen : MonoBehaviour
     [SerializeField]
     private GameObject buttonPrefab;
 
+    
+
     public int countStages;
 
     private void Start()
     {
+        
+        
         countStages = 5;
     }
+
+
 
     public void SelectImage(Sprite sprite)
     {

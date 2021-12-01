@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,15 +12,42 @@ public class SelectImageScreen : MonoBehaviour
     [SerializeField]
     private GameObject imagePrefab;
 
-    [SerializeField]
-    private GameEvent selectEvent;
+    private Router router;
+    private List<LevelModel> levels;
 
     // Start is called before the first frame update
     void Start()
     {
+        SetupRouter();
         LoadImages();
         LayoutScrollView();
+        LoadLevels();
     }
+
+    private void LoadLevels()
+    {
+        //Todo
+    }
+
+    private void SetupRouter()
+    {
+        var router = GameObject.FindGameObjectWithTag("Router");
+
+        if (router == null)
+        {
+            throw new System.NullReferenceException("Not found tag 'Router'");
+        }
+
+        var routerComponent = router.GetComponent<Router>();
+
+        if (routerComponent == null)
+        {
+            throw new System.NullReferenceException("Missing component 'Router'");
+        }
+
+        this.router = routerComponent;
+    }
+
     private void LayoutScrollView()
     {
         CreateImageGameObjects();
@@ -38,15 +66,21 @@ public class SelectImageScreen : MonoBehaviour
             imageGameObject.transform.SetParent(scrollView.transform);
             imageGameObject.transform.localScale = Vector2.one;
 
+            var imageModel = imageGameObject.AddComponent<ImageModel>();
+            imageModel.AddSprite(image);
+            imageModel.AddAcion(SelectImage);
+
             var buttonComponent = imageGameObject.GetComponent<Button>();
-            buttonComponent.onClick.AddListener(SelectImage);
+            buttonComponent.onClick.AddListener(imageModel.Fire);
+
+            
         }
     }
 
 
-    private void SelectImage()
+    private void SelectImage(Sprite image)
     {
-
+        router.ShowSelectStageScreen(gameObject, image);
     }
    
     private void LoadImages()
